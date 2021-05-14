@@ -9,6 +9,8 @@ public class Simulator {
     public static int maxLifeExpectancy;
     public static int maxVision;
     public static void main(String args[]) {
-        
+//        Person person = new Person();
+//        Patch patch = new Patch();
+//        Landscape land = new Landscape();
     }
 }
