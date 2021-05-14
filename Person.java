@@ -7,4 +7,8 @@ public class Person {
     private int location_x;
     private int location_y;
     private Status status;
+
+    public Person() {
+        
+    }
 }
