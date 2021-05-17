@@ -7,5 +7,7 @@ public class Landscape {
     private int grainGrowthInterval;
     private int numGrainGrown;
 
-    
+    public int grainAhead(int location_x, int location_y, int vision) {
+
+    }
 }
