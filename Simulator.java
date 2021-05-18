@@ -14,9 +14,7 @@ public class Simulator {
         Landscape land = new Landscape();
 
         while(true){
-            person.turnTowardsGrain();
-            person.moveEatAgeDie();
-
+            //functions
         }
     }
 }
