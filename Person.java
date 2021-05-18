@@ -1,76 +1,54 @@
 public class Person {
     private int age;
-    private int wealth;
+    private double wealth;
     private int lifeExpectancy;
     private int metabolism;
     private int vision;
     private int locationX;
     private int locationY;
     private Status status;
-    private Landscape landscape;
-    private int facingX;
-    private int facingY;
+    private Direction direction;
 
-    public Person(int age, int wealth, int lifeExpectancy, int metabolism, int vision, Landscape landscape,
-    int facingX, int facingY) {
+    public Person(int age, int wealth, int lifeExpectancy, int metabolism, int vision,
+    Direction direction) {
         this.age = age;
         this.wealth = wealth;
         this.lifeExpectancy = lifeExpectancy;
         this.metabolism = metabolism;
         this.vision = vision;
-        this.landscape = landscape;
-        this.facingX = facingX;
-        this.facingY = facingY;
+        this.direction = direction;
+    }
+    
+    public int getVision() {
+		return vision;
+	}
+
+	public int getLocationX() {
+		return locationX;
+	}
+
+	public int getLocationY() {
+		return locationY;
+	}
+
+	public Direction getDirection() {
+    	return this.direction;
     }
 
-    public void turnTowardsGrain() {
-        int bestX = facingX;
-        int bestY = facingY;
-        int bestAmount = landscape.grainAhead(facingX, facingY, vision);
-
-        if (!(facingX == locationX + 1 && facingY == locationY)) {
-            if (landscape.grainAhead(locationX + 1, locationY, vision) > bestAmount) {
-                bestX = locationX + 1;
-                bestY = locationY;
-                bestAmount = landscape.grainAhead(locationX + 1, locationY, vision);
-            }
-        }
-
-        if (!(facingX == locationX - 1 && facingY == locationY)) {
-            if (landscape.grainAhead(locationX - 1, locationY, vision) > bestAmount) {
-                bestX = locationX - 1;
-                bestY = locationY;
-                bestAmount = landscape.grainAhead(locationX - 1, locationY, vision);
-            }
-        }
-
-        if (!(facingX == locationX && facingY == locationY + 1)) {
-            if (landscape.grainAhead(locationX, locationY + 1, vision) > bestAmount) {
-                bestX = locationX;
-                bestY = locationY + 1;
-                bestAmount = landscape.grainAhead(locationX, locationY + 1, vision);
-            }
-        }
-
-        if (!(facingX == locationX && facingY == locationY - 1)) {
-            if (landscape.grainAhead(locationX, locationY - 1, vision) > bestAmount) {
-                bestX = locationX;
-                bestY = locationY - 1;
-                bestAmount = landscape.grainAhead(locationX, locationY - 1, vision);
-            }
-        }
-
-        this.facingX = bestX;
-        this.facingY = bestY;
-        
+    public void turn(Direction direction) {
+        this.direction = direction;
     }
 
     public void moveEatAgeDie() {
-        this.locationX = facingX;
-        this.locationY = facingY;
+        
         this.wealth = this.wealth - this.metabolism;
         this.age += 1;
 
+    }
+    
+    public void moveTo(int x, int y) {
+    	this.locationX = x;
+    	this.locationY = y;
     }
 
     public void setStatus(int maxWealth) {
@@ -95,7 +73,7 @@ public class Person {
         }
     }
 
-    public void gainGrain(int harvest) {
+    public void gainGrain(double harvest) {
         wealth += harvest;
     }
 

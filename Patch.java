@@ -1,14 +1,18 @@
+import java.util.ArrayList;
+
 public class Patch {
     private double grainHere;
     private double maxGrainHere;
     private int location_x;
     private int location_y;
+    private ArrayList<Person> people;
     
     public Patch(int x, int y, int maxGrainHere) {
     	this.location_x = x;
     	this.location_y = y;
     	this.maxGrainHere = maxGrainHere;
     	grainHere = maxGrainHere;
+    	this.people = new ArrayList<Person>();
     }
     
     public int getLocation_x() {
@@ -25,11 +29,25 @@ public class Patch {
     		grainHere = maxGrainHere;
     	}
     }
+	
+	public void addPerson(Person person) {
+		people.add(person);
+	}
+	
+	public void removePerson(Person person) {
+		people.remove(person);
+	}
     
-    public double harvest() {
-    	double harvestAmount = grainHere;
+    public void harvest() {
+    	double peopleHere = people.size();
+    	if(grainHere == 0 || peopleHere == 0) {
+    		return;
+    	}
+    	double harvestAmount = Math.floor(grainHere/peopleHere);
+    	for(Person person: people) {
+    		person.gainGrain(harvestAmount);
+    	}
     	grainHere = 0;
-    	return harvestAmount;
     }
     
     public double getGrainHere() {

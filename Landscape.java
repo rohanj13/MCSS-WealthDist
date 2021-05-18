@@ -1,50 +1,34 @@
 import java.util.ArrayList;
 
 public class Landscape {
-    private final static int WIDTH=45;
-    private final static int HEIGHT=45;
-    private final static int MAXGRAIN = 50;
+    public final static int WIDTH=45;
+    public final static int HEIGHT=45;
+    public final static int MAXGRAIN = 50;
     private int percentBestLand;
     private Patch[][] land;
-//    private int grainGrowthInterval;
     private int numGrainGrown;
     private ArrayList<Patch> diffuseList;
+    private ArrayList<Person> people;
     
-//    public static void main(String[] args) {
-//    	Landscape landscape = new Landscape(5, 1, 4);
-//    	landscape.setupLand();
-//    	landscape.printLand();
-//    }
+    public static void main(String[] args) {
+    	Landscape landscape = new Landscape(5, 4);
+    	landscape.setupLand();
+    	landscape.printLand();
+    	landscape.bestDirection(3,1,2);
+    }
 
-    public int grainAhead(int location_x, int location_y, int vision) { }
-
-    public Landscape(int percentBestLand, int grainGrowthInterval, int numGrainGrown) {
+    public Landscape(int percentBestLand, int numGrainGrown) {
     	land = new Patch[WIDTH][HEIGHT];
     	this.percentBestLand = percentBestLand;
-//    	this.grainGrowthInterval = grainGrowthInterval;
     	this.numGrainGrown = numGrainGrown;
     	this.diffuseList = new ArrayList<Patch>();
+    	this.people = new ArrayList<Person>();
     }
     
-    public void diffuse(double percentage) {
-    	for(Patch patch: diffuseList) {
-    		int x = patch.getLocation_x();
-    		int y = patch.getLocation_y();
-    		double currentGrain = patch.getGrainHere();
-    		patch.setGrainHere(currentGrain * (1 - percentage));
-    		double diffuseAmount = (currentGrain * percentage /8);
-    		
-    		this.upPatch(x, y).addGrain(diffuseAmount);
-    		this.downPatch(x, y).addGrain(diffuseAmount);
-    		this.leftPatch(x, y).addGrain(diffuseAmount);
-    		this.rightPatch(x, y).addGrain(diffuseAmount);
-    		this.upLeftPatch(x, y).addGrain(diffuseAmount);
-    		this.upRightPatch(x, y).addGrain(diffuseAmount);
-    		this.downLeftPatch(x, y).addGrain(diffuseAmount);
-    		this.downRightPatch(x, y).addGrain(diffuseAmount);
-    	}
-    	
-    	diffuseList.clear();
+    public void addPerson(Person person, int x, int y) {
+    	Patch patch = land[x][y];
+    	people.add(person);
+    	patch.addPerson(person);
     }
     
     public void setupLand() {
@@ -98,6 +82,27 @@ public class Landscape {
     	}
     }
     
+    public void diffuse(double percentage) {
+    	for(Patch patch: diffuseList) {
+    		int x = patch.getLocation_x();
+    		int y = patch.getLocation_y();
+    		double currentGrain = patch.getGrainHere();
+    		patch.setGrainHere(currentGrain * (1 - percentage));
+    		double diffuseAmount = (currentGrain * percentage /8);
+    		
+    		this.upPatch(x, y).addGrain(diffuseAmount);
+    		this.downPatch(x, y).addGrain(diffuseAmount);
+    		this.leftPatch(x, y).addGrain(diffuseAmount);
+    		this.rightPatch(x, y).addGrain(diffuseAmount);
+    		this.upLeftPatch(x, y).addGrain(diffuseAmount);
+    		this.upRightPatch(x, y).addGrain(diffuseAmount);
+    		this.downLeftPatch(x, y).addGrain(diffuseAmount);
+    		this.downRightPatch(x, y).addGrain(diffuseAmount);
+    	}
+    	
+    	diffuseList.clear();
+    }
+    
     public void growEverywhere() {
     	for(int x = 0; x < WIDTH; x++) {
     		for (int y = 0; y < HEIGHT; y++) {
@@ -106,12 +111,50 @@ public class Landscape {
     	}
     }
     
-    public void harvest() {
-    	
+    /**
+     * Get all people turn towards the direction with most grain in vision
+     */
+    public void turn_all_people() {
+    	for(Person person: people) {
+    		int x = person.getLocationX();
+    		int y = person.getLocationY();
+    		int vision = person.getVision();
+    		
+    		person.turn(bestDirection(x, y, vision));
+    	}
     }
     
-    public void turn_all_people() {
-    	
+    public void harvest() {
+    	for(int x = 0; x < WIDTH; x++) {
+    		for (int y = 0; y < HEIGHT; y++) {
+    			land[x][y].harvest();
+    		}
+    	}
+    }
+    
+    public void move_all_people() {
+    	for(Person person: people) {
+    		int x = person.getLocationX();
+    		int y = person.getLocationY();
+    		Direction direction = person.getDirection();
+    		Patch nextPatch = null;
+    		if(direction == Direction.UP) {
+    			nextPatch = upPatch(x, y);
+    		} else if (direction == Direction.RIGHT){
+    			nextPatch = rightPatch(x, y);
+    		} else if (direction == Direction.DOWN){
+    			nextPatch = downPatch(x, y);
+    		} else if (direction == Direction.LEFT){
+    			nextPatch = leftPatch(x, y);
+    		} else {
+    			nextPatch = upPatch(x, y);
+    		}
+    		land[x][y].removePerson(person);
+    		int targetX = nextPatch.getLocation_x();
+    		int targetY = nextPatch.getLocation_y();
+    		person.moveTo(targetX, targetY);
+    		nextPatch.addPerson(person);
+    	}
     }
     
     public void printLand() {
@@ -124,6 +167,29 @@ public class Landscape {
     	}
     }
     
+    public Direction bestDirection(int x, int y, int vision) {
+    	Direction bestDirection = Direction.UP;
+    	double bestAmount = upTotal(x, y, vision -1);
+    	double rightTotal = rightTotal(x, y, vision -1);
+    	double downTotal = downTotal(x, y, vision -1);
+    	double leftTotal = leftTotal(x, y, vision -1);
+    	if(rightTotal > bestAmount) {
+    		bestAmount = rightTotal;
+    		bestDirection = Direction.RIGHT;
+    	}
+    	
+    	if(downTotal > bestAmount) {
+    		bestAmount = rightTotal;
+    		bestDirection = Direction.DOWN;
+    	}
+    	
+    	if(leftTotal > bestAmount) {
+    		bestAmount = leftTotal;
+    		bestDirection = Direction.LEFT;
+    	}
+		
+		return bestDirection;
+	}
     
     public Patch leftPatch(int x, int y) {
     	if(x == 0) {
@@ -204,6 +270,75 @@ public class Landscape {
     	
     	return land[returnX][returnY];
     }
+	
+    /**
+	 * recursively get the total amount of grain of patches on the left in vision
+	 * @param x
+	 * @param y
+	 * @param vision
+	 * @return
+	 */
+	public double leftTotal(int x, int y, int vision){
+		Patch leftPatch = leftPatch(x, y);
+		double total = leftPatch.getGrainHere();
+		if (vision == 0){
+			return total;
+		}
+		
+		return (total + leftTotal(leftPatch.getLocation_x(), leftPatch.getLocation_y(), vision -1));
+	}
+	
+	/**
+	 * recursively get the total amount of grain of patches on the right in vision
+	 * @param x
+	 * @param y
+	 * @param vision
+	 * @return
+	 */
+	public double rightTotal(int x, int y, int vision){
+		Patch rightPatch = rightPatch(x, y);
+		double total = rightPatch.getGrainHere();
+		if (vision == 0){
+			return total;
+		}
+		
+		return (total + rightTotal(rightPatch.getLocation_x(), rightPatch.getLocation_y(), vision -1));
+	}
+	
+	/**
+	 * recursively get the total amount of grain of patches upward in vision
+	 * @param x
+	 * @param y
+	 * @param vision
+	 * @return
+	 */
+	public double upTotal(int x, int y, int vision){
+		Patch upPatch = upPatch(x, y);
+		double total = upPatch.getGrainHere();
+		if (vision == 0){
+			return total;
+		}
+		
+		return (total + upTotal(upPatch.getLocation_x(), upPatch.getLocation_y(), vision -1));
+	}
+	
+	
+	/**
+	 * recursively get the total amount of grain of patches downward in vision
+	 * @param x
+	 * @param y
+	 * @param vision
+	 * @return
+	 */
+	public double downTotal(int x, int y, int vision){
+		Patch downPatch = downPatch(x, y);
+		double total = downPatch.getGrainHere();
+		if (vision == 0){
+			return total;
+		}
+		
+		return (total + downTotal(downPatch.getLocation_x(), downPatch.getLocation_y(), vision -1));
+	}
 }
 
 
