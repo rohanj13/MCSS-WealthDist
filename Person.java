@@ -8,66 +8,107 @@ public class Person {
     private int locationY;
     private Status status;
     private Landscape landscape;
-    private int facingX;
-    private int facingY;
+    private int facing;
 
     public Person(int age, int wealth, int lifeExpectancy, int metabolism, int vision, Landscape landscape,
-    int facingX, int facingY) {
+    int facing) {
         this.age = age;
         this.wealth = wealth;
         this.lifeExpectancy = lifeExpectancy;
         this.metabolism = metabolism;
         this.vision = vision;
         this.landscape = landscape;
-        this.facingX = facingX;
-        this.facingY = facingY;
+        this.facing = facing;
     }
 
     public void turnTowardsGrain() {
-        int bestX = facingX;
-        int bestY = facingY;
-        int bestAmount = landscape.grainAhead(facingX, facingY, vision);
+        // int best = 0;
+        // int bestAmount = landscape.grainAhead(facingX, facingY, vision);
 
-        if (!(facingX == locationX + 1 && facingY == locationY)) {
-            if (landscape.grainAhead(locationX + 1, locationY, vision) > bestAmount) {
-                bestX = locationX + 1;
-                bestY = locationY;
-                bestAmount = landscape.grainAhead(locationX + 1, locationY, vision);
-            }
-        }
+        // if (facing ) {
+        //     if (landscape.grainAhead(locationX, locationY, 90, vision) > bestAmount) {
+        //         bestX = locationX + 1;
+        //         bestY = locationY;
+        //         bestAmount = landscape.grainAhead(locationX + 1, locationY, vision);
+        //     }
+        // }
 
-        if (!(facingX == locationX - 1 && facingY == locationY)) {
-            if (landscape.grainAhead(locationX - 1, locationY, vision) > bestAmount) {
-                bestX = locationX - 1;
-                bestY = locationY;
-                bestAmount = landscape.grainAhead(locationX - 1, locationY, vision);
-            }
-        }
+        // if (!(facingX == locationX - 1 && facingY == locationY)) {
+        //     if (landscape.grainAhead(locationX - 1, locationY, vision) > bestAmount) {
+        //         bestX = locationX - 1;
+        //         bestY = locationY;
+        //         bestAmount = landscape.grainAhead(locationX - 1, locationY, vision);
+        //     }
+        // }
 
-        if (!(facingX == locationX && facingY == locationY + 1)) {
-            if (landscape.grainAhead(locationX, locationY + 1, vision) > bestAmount) {
-                bestX = locationX;
-                bestY = locationY + 1;
-                bestAmount = landscape.grainAhead(locationX, locationY + 1, vision);
-            }
-        }
+        // if (!(facingX == locationX && facingY == locationY + 1)) {
+        //     if (landscape.grainAhead(locationX, locationY + 1, vision) > bestAmount) {
+        //         bestX = locationX;
+        //         bestY = locationY + 1;
+        //         bestAmount = landscape.grainAhead(locationX, locationY + 1, vision);
+        //     }
+        // }
 
-        if (!(facingX == locationX && facingY == locationY - 1)) {
-            if (landscape.grainAhead(locationX, locationY - 1, vision) > bestAmount) {
-                bestX = locationX;
-                bestY = locationY - 1;
-                bestAmount = landscape.grainAhead(locationX, locationY - 1, vision);
-            }
-        }
+        // if (!(facingX == locationX && facingY == locationY - 1)) {
+        //     if (landscape.grainAhead(locationX, locationY - 1, vision) > bestAmount) {
+        //         bestX = locationX;
+        //         bestY = locationY - 1;
+        //         bestAmount = landscape.grainAhead(locationX, locationY - 1, vision);
+        //     }
+        // }
 
-        this.facingX = bestX;
-        this.facingY = bestY;
+        // this.facingX = bestX;
+        // this.facingY = bestY;
+
+        this.facing = landscape.bestDirection(locationX, locationY, vision);
         
     }
 
+    private int[] getPos(int direction, int locationX, int locationY) {
+        int[] coordinates = new int[2];
+        if (direction == 0) {
+            if (locationY == landscape.getHeight() - 1) {
+                locationY = 0;
+            }
+            else {
+                locationY += 1;
+            }
+            
+        }
+        else if (direction == 90) {
+            if (locationX == landscape.getWidth() - 1) {
+                locationX = 0;
+            }
+            else {
+                locationX += 1;
+            }
+            
+        }
+        else if (direction == 180) {
+            if (locationY == 0) {
+                locationY = landscape.getHeight() - 1;
+            }
+            else {
+                locationY -= 1;
+            }
+        }
+        else if (direction == 270) {
+            if (locationX == 0) {
+                locationX = landscape.getWidth() - 1;
+            }
+            else {
+                locationX -= 1;
+            }
+        }
+        coordinates[0] = locationX;
+        coordinates[1] = locationY;
+        return coordinates;
+    }
+
     public void moveEatAgeDie() {
-        this.locationX = facingX;
-        this.locationY = facingY;
+        int[] coordinates = getPos(facing, this.locationX, this.locationY);
+        this.locationX = coordinates[0];
+        this.locationY = coordinates[1];
         this.wealth = this.wealth - this.metabolism;
         this.age += 1;
 
