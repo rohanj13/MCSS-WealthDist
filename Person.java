@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class Person {
     private int age;
     private double wealth;
@@ -9,22 +11,48 @@ public class Person {
     private Status status;
     private Direction direction;
 
-    public Person(int age, int wealth, int lifeExpectancy, int metabolism, int vision,
-    Direction direction) {
-        this.age = age;
-        this.wealth = wealth;
-        this.lifeExpectancy = lifeExpectancy;
-        this.metabolism = metabolism;
-        this.vision = vision;
-        this.direction = direction;
+    public Person() {
+       
+    }
+    
+    public void setupPerson() {
+    	Random random = new Random();
+    	lifeExpectancy = Simulator.minLifeExpectancy + random.nextInt(Simulator.maxLifeExpectancy - Simulator.minLifeExpectancy + 1);
+        metabolism = 1 + random.nextInt(Simulator.maxMetabolism);
+        wealth = metabolism + random.nextInt(51);
+        vision = 1 + random.nextInt(Simulator.maxVision);
+        age = random.nextInt(lifeExpectancy);
+        direction = randomDirection();
+    }
+    
+    public Direction randomDirection() {
+    	Random random = new Random();
+    	int facing = random.nextInt(4);
+    	if(facing == 0) {
+        	return Direction.UP;
+        } else if (facing == 1) {
+        	return Direction.RIGHT;
+        } else if (facing == 2) {
+        	return Direction.DOWN;
+        } else {
+        	return Direction.LEFT;
+        }
     }
     
     public int getVision() {
 		return vision;
 	}
+    
+    public double getWealth() {
+    	return wealth;
+    }
 
 	public int getLocationX() {
 		return locationX;
+	}
+
+	public Status getStatus() {
+		return status;
 	}
 
 	public int getLocationY() {
@@ -34,24 +62,27 @@ public class Person {
 	public Direction getDirection() {
     	return this.direction;
     }
+	
+	public void setLocation(int x, int y) {
+		this.locationX = x;
+		this.locationY = y;
+	}
 
     public void turn(Direction direction) {
         this.direction = direction;
     }
 
-    public void moveEatAgeDie() {
-        
-        this.wealth = this.wealth - this.metabolism;
-        this.age += 1;
-
-    }
-    
-    public void moveTo(int x, int y) {
+    public void moveEatAgeDie(int x, int y) {
     	this.locationX = x;
     	this.locationY = y;
+        this.wealth = this.wealth - this.metabolism;
+        this.age += 1;
+        if(this.isDead()) {
+        	this.setupPerson();
+        }
     }
 
-    public void setStatus(int maxWealth) {
+    public void setStatus(double maxWealth) {
         if (this.wealth <= maxWealth / 3) {
             this.status = Status.POOR;
         }

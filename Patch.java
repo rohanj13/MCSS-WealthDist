@@ -5,7 +5,7 @@ public class Patch {
     private double maxGrainHere;
     private int location_x;
     private int location_y;
-    private ArrayList<Person> people;
+    public ArrayList<Person> people;
     
     public Patch(int x, int y, int maxGrainHere) {
     	this.location_x = x;

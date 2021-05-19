@@ -11,51 +11,57 @@ public class Simulator {
     public static int maxVision;
     public static int numPeople;
     public static int grainGrowthInterval;
+    public static int percentageBestland;
+    public static int numGrainGrown;
+    public Landscape land;
         
     public Simulator() {
-        maxMetabolism = 15;
-        numTicks = 1;
+    	numPeople = 100;
+    	maxVision = 5;
+    	maxMetabolism = 15;   
         minLifeExpectancy = 1;
         maxLifeExpectancy = 83;
-        maxVision = 5;
-        numPeople = 100;
+        percentageBestland = 10;
+        grainGrowthInterval = 1;
+    	numGrainGrown = 4;
+    	numTicks = 0;
+    	land = new Landscape(percentageBestland, numGrainGrown);
+    	land.setupLand();
+    	setupPeople(land);
+    	land.updateStatus();
+    	land.printLand();
+    	while(numTicks < 100) {
+    		tick();
+    		land.printLand();
+    	}
     }
 
-    public void setupPeople() {
+    public void setupPeople(Landscape land) {
     	Random random = new Random();
         for (int i = 0; i < numPeople; i++) {
-            int lifeExpectancy = minLifeExpectancy + random.nextInt(maxLifeExpectancy - minLifeExpectancy + 1);
-            int metabolism = 1 + random.nextInt(maxMetabolism);
-            int wealth = metabolism + random.nextInt(51);
-            int vision = 1 + random.nextInt(maxVision);
-            int age = random.nextInt(lifeExpectancy);
-            Direction direction = randomDirection();
             int locationX = random.nextInt(Landscape.WIDTH);
             int locationY = random.nextInt(Landscape.HEIGHT);
-            // random.nextInt(max - min) + min;
+            Person person = new Person();
+            person.setupPerson();
+            land.addPerson(person, locationX, locationY);
         }
     }
     
-    public Direction randomDirection() {
-    	Random random = new Random();
-    	int facing = random.nextInt(4);
-    	if(facing == 0) {
-        	return Direction.UP;
-        } else if (facing == 1) {
-        	return Direction.RIGHT;
-        } else if (facing == 2) {
-        	return Direction.DOWN;
-        } else {
-        	return Direction.LEFT;
-        }
+   
+    
+    public void tick() {
+    	land.turn_all_people();
+    	land.harvest();
+    	land.all_people_take_action();
+    	land.updateStatus();
+    	if(numTicks % grainGrowthInterval == 0) {
+    		land.growEverywhere();
+    	}
+    	numTicks++;
     }
 
 
     public static void main(String args[]) {
-        Landscape land = new Landscape(10, 4);
-
-        while(true){
-            //functions
-        }
+    	Simulator simulator = new Simulator();
     }
 }

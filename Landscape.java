@@ -9,13 +9,6 @@ public class Landscape {
     private int numGrainGrown;
     private ArrayList<Patch> diffuseList;
     private ArrayList<Person> people;
-    
-    public static void main(String[] args) {
-    	Landscape landscape = new Landscape(5, 4);
-    	landscape.setupLand();
-    	landscape.printLand();
-    	landscape.bestDirection(3,1,2);
-    }
 
     public Landscape(int percentBestLand, int numGrainGrown) {
     	land = new Patch[WIDTH][HEIGHT];
@@ -27,6 +20,7 @@ public class Landscape {
     
     public void addPerson(Person person, int x, int y) {
     	Patch patch = land[x][y];
+    	person.setLocation(x, y);
     	people.add(person);
     	patch.addPerson(person);
     }
@@ -132,7 +126,7 @@ public class Landscape {
     	}
     }
     
-    public void move_all_people() {
+    public void all_people_take_action() {
     	for(Person person: people) {
     		int x = person.getLocationX();
     		int y = person.getLocationY();
@@ -152,19 +146,39 @@ public class Landscape {
     		land[x][y].removePerson(person);
     		int targetX = nextPatch.getLocation_x();
     		int targetY = nextPatch.getLocation_y();
-    		person.moveTo(targetX, targetY);
+    		
+    		person.moveEatAgeDie(targetX, targetY);
     		nextPatch.addPerson(person);
     	}
     }
     
-    public void printLand() {
-    	for(int y = 0; y < HEIGHT; y++) {
-    		System.out.print("line " + y + ":");
-    		for (int x = 0; x < WIDTH; x++) {
-    			System.out.print(" " + land[x][y].getGrainHere());
+    public void updateStatus() {
+    	double maxWealth = 0;
+    	for(Person person: people) {
+    		if(person.getWealth() > maxWealth) {
+    			maxWealth = person.getWealth();
     		}
-    		System.out.println();
     	}
+    	
+    	for(Person person: people) {
+    		person.setStatus(maxWealth);
+    	}
+    }
+    
+    public void printLand() {
+    	int lowNum = 0;
+    	int middleNum = 0;
+    	int highNum = 0;
+    	for(Person person: people) {
+    		if(person.getStatus() == Status.POOR) {
+    			lowNum++;
+    		} else if(person.getStatus() == Status.MIDDLE_CLASS) {
+    			middleNum++;
+    		} else if(person.getStatus() == Status.RICH) {
+    			highNum++;
+    		}
+    	}
+    	System.out.println("Low: " + lowNum + "|middle: " + middleNum + "|high: " + highNum);
     }
     
     public Direction bestDirection(int x, int y, int vision) {
