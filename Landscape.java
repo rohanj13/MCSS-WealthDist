@@ -165,7 +165,7 @@ public class Landscape {
     	}
     }
     
-    public void printLand() {
+    public String landInformation() {
     	int lowNum = 0;
     	int middleNum = 0;
     	int highNum = 0;
@@ -178,7 +178,8 @@ public class Landscape {
     			highNum++;
     		}
     	}
-    	System.out.println("Low: " + lowNum + "|middle: " + middleNum + "|high: " + highNum);
+    	String str = "Low: "+ lowNum + "|middle: " + middleNum + "|high: " + highNum;
+    	return str;
     }
     
     public Direction bestDirection(int x, int y, int vision) {

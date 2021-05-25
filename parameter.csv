@@ -1,0 +1,9 @@
+num-people,1000
+max-vision,4
+metabolism-max,20
+life-expectancy-min,90
+life-expectancy-max,100
+percent-best-land,11
+grain-growth-interval,2
+num-grain-grown,6
+max-tick,500
