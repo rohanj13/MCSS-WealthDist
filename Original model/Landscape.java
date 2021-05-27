@@ -178,7 +178,7 @@ public class Landscape {
     			highNum++;
     		}
     	}
-    	String str = lowNum + "," + middleNum + "," + highNum;
+    	String str = "Low: "+ lowNum + "|middle: " + middleNum + "|high: " + highNum;
     	return str;
     }
     

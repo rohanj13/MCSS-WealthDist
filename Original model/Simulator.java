@@ -32,13 +32,11 @@ public class Simulator {
     	land.updateStatus();
     	try {
     		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-    		writer.write("\"Time\"" + "," + "\"low\"," + "\"mid\"," + "\"up\"");
-    		writer.newLine();
-	    	writer.write("0," + land.landInformation());
+	    	writer.write("Tick 0: " + land.landInformation());
 	    	writer.newLine();
 	    	while(numTicks < maxTick) {
 	    		tick();
-	    		writer.write(numTicks + "," + land.landInformation());
+	    		writer.write("Tick " + numTicks + ": " + land.landInformation());
 	    		writer.newLine();
 	    	}
 	    	writer.close();
@@ -155,6 +153,6 @@ public class Simulator {
     		}
     	} 
     	printParameters();
-    	new Simulator();
+    	Simulator simulator = new Simulator();
     }
 }

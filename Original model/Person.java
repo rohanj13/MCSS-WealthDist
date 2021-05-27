@@ -81,20 +81,6 @@ public class Person {
         	this.setupPerson();
         }
     }
-    
-    public void inherit() {
-    	if(this.wealth < 0) {
-        	this.setupPerson();
-        	return;
-        }
-    	Random random = new Random();
-    	lifeExpectancy = Simulator.minLifeExpectancy + random.nextInt(Simulator.maxLifeExpectancy - Simulator.minLifeExpectancy + 1);
-        metabolism = 1 + random.nextInt(Simulator.maxMetabolism);
-        wealth = Math.floor(this.wealth * random.nextFloat());
-        vision = 1 + random.nextInt(Simulator.maxVision);
-        age = random.nextInt(lifeExpectancy);
-        direction = randomDirection();
-    }
 
     public void setStatus(double maxWealth) {
         if (this.wealth <= maxWealth / 3) {
